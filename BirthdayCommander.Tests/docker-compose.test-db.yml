@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  birthday-commander-postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 123123123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgres_data/data
+
+volumes:
+  postgres_data:
