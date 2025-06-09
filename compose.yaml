@@ -1,0 +1,7 @@
+﻿services:
+  birthdaycommander:
+    image: birthdaycommander
+    build:
+      context: .
+      dockerfile: BirthdayCommander/Dockerfile
+
