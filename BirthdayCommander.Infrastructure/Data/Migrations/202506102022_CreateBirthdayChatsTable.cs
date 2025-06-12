@@ -1,5 +1,5 @@
 using FluentMigrator;
-namespace BirthdayCommander.Infrastructure.Migrations;
+namespace BirthdayCommander.Infrastructure.Data.Migrations;
 
 [Migration(202506102022)]
 public class CreateBirthdayChatsTable : Migration
