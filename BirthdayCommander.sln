@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirthdayCommander.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirthdayCommander.Infrastructure", "BirthdayCommander.Infrastructure\BirthdayCommander.Infrastructure.csproj", "{593811F2-7826-49A7-BD20-D3E8DEB7FE8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirthdayCommander.Core", "BirthdayCommander.Core\BirthdayCommander.Core.csproj", "{4DB70F25-4ADF-432E-B0D2-71296D85CC01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +31,9 @@ Global
 		{593811F2-7826-49A7-BD20-D3E8DEB7FE8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{593811F2-7826-49A7-BD20-D3E8DEB7FE8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{593811F2-7826-49A7-BD20-D3E8DEB7FE8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DB70F25-4ADF-432E-B0D2-71296D85CC01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DB70F25-4ADF-432E-B0D2-71296D85CC01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DB70F25-4ADF-432E-B0D2-71296D85CC01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DB70F25-4ADF-432E-B0D2-71296D85CC01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
