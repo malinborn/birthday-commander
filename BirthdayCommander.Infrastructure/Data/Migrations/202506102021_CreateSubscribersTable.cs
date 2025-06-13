@@ -9,13 +9,13 @@ public class CreateSubscribersTable : Migration
     {
         Create.Table("subscribers")
             .WithColumn("id").AsGuid().PrimaryKey()
-            .WithColumn("employee_id").AsGuid().NotNullable()
+            .WithColumn("birthday_employee_id").AsGuid().NotNullable()
             .WithColumn("subscriber_id").AsGuid().NotNullable()
             .WithColumn("created_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentDateTime)
             .WithColumn("is_active").AsBoolean().NotNullable().WithDefaultValue(true);
 
-        Create.ForeignKey("FK_subscribers_employee_id")
-            .FromTable("subscribers").ForeignColumn("employee_id")
+        Create.ForeignKey("FK_subscribers_birthday_employee_id")
+            .FromTable("subscribers").ForeignColumn("birthday_employee_id")
             .ToTable("employees").PrimaryColumn("id")
             .OnDelete(System.Data.Rule.Cascade);
         
@@ -26,11 +26,11 @@ public class CreateSubscribersTable : Migration
 
         Create.UniqueConstraint("UQ_subscribers_employee_subscriber_id")
             .OnTable("subscribers")
-            .Columns("employee_id", "subscriber_id");
+            .Columns("birthday_employee_id", "subscriber_id");
 
         Create.Index("IX_subscribers_employee_id")
             .OnTable("subscribers")
-            .OnColumn("employee_id").Ascending();
+            .OnColumn("birthday_employee_id").Ascending();
         
         Create.Index("IX_subscribers_subscriber_id")
             .OnTable("subscribers")

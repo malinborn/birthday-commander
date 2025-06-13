@@ -8,7 +8,7 @@ public class CreateBirthdayChatsTable : Migration
     {
         Create.Table("birthday_chats")
             .WithColumn("id").AsGuid().PrimaryKey()
-            .WithColumn("employee_id").AsGuid().Nullable()
+            .WithColumn("birthday_employee_id").AsGuid().Nullable()
             .WithColumn("mattermost_channel_id").AsString(100).NotNullable().Unique()
             .WithColumn("birthday_commander_id").AsGuid().Nullable()
             .WithColumn("status").AsString(20).NotNullable().WithDefaultValue("planning")
@@ -17,8 +17,8 @@ public class CreateBirthdayChatsTable : Migration
             .WithColumn("created_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentDateTime)
             .WithColumn("updated_at").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentDateTime);
         
-        Create.ForeignKey("FK_birthday_chats_employee_id")
-            .FromTable("birthday_chats").ForeignColumn("employee_id")
+        Create.ForeignKey("FK_birthday_chats_birthday_employee_id")
+            .FromTable("birthday_chats").ForeignColumn("birthday_employee_id")
             .ToTable("employees").PrimaryColumn("id")
             .OnDelete(System.Data.Rule.SetNull);
         
