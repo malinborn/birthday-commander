@@ -3,9 +3,9 @@ services:
   birthday-commander-postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: 123123123
+      POSTGRES_DB: testdb_tests
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
     ports:
       - "5432:5432"
     volumes:
