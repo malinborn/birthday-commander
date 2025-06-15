@@ -12,8 +12,6 @@ public class Employee
     public string? WishlistLink { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    
-    
 }
 
 
