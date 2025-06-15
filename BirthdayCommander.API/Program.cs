@@ -78,5 +78,7 @@ app.Use(async (context, next) =>
 
 app.MapGet("/", () => "Hello World!");
 
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 await app.RunAsync();
 
