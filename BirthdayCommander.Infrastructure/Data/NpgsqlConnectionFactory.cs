@@ -13,6 +13,8 @@ public class NpgsqlConnectionFactory : IDbConnectionFactory
     {
         _connectionString = configuration.GetConnectionString("DefaultConnection") 
             ?? throw new InvalidOperationException("No connection string found");
+        
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
     }
 
     public IDbConnection Create()
