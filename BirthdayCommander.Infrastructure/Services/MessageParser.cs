@@ -98,6 +98,7 @@ public class MessageParser : IMessageParser
                 {
                     command.Parameters.Add(remainder);
                 }
+                command.Parameters = command.Parameters.Distinct().ToList();
                 return command;
             }
         }
@@ -108,6 +109,7 @@ public class MessageParser : IMessageParser
         {
             command.Type = CommandType.SetWishlist;
             command.Parameters.Add(urlMatches[0].Value);
+            command.Parameters = command.Parameters.Distinct().ToList();
             return command;
         }
         
@@ -121,6 +123,7 @@ public class MessageParser : IMessageParser
                 ? CommandType.Unsubscribe 
                 : CommandType.Subscribe;
             
+            command.Parameters = command.Parameters.Distinct().ToList();
             return command;
         }
         
@@ -129,10 +132,12 @@ public class MessageParser : IMessageParser
         {
             command.Type = CommandType.SetBirthday;
             command.Parameters.Add(dateMatches[0].Value);
+            command.Parameters = command.Parameters.Distinct().ToList();
             return command;
         }
 
         command.Type = CommandType.Unknown;
+        command.Parameters = command.Parameters.Distinct().ToList();
         return command;
     }
     
