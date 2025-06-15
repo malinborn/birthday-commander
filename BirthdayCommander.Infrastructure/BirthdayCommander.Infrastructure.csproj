@@ -12,10 +12,11 @@
       <PackageReference Include="FluentMigrator.Runner" Version="7.1.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
       <PackageReference Include="Npgsql" Version="9.0.3" />
+      <PackageReference Include="Websocket.Client" Version="5.2.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\BirthdayCommander.Core\BirthdayCommander.Core.csproj" />
     </ItemGroup>
 
 </Project>
