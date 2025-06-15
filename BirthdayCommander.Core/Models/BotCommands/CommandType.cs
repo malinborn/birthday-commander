@@ -4,8 +4,10 @@ public enum CommandType
 {
     Unknown,
     Subscribe,
+    Unsubscribe,
     ShowSubscriptions,
     ShowSubscribers, 
     SetWishlist,
+    SetBirthday,
     Help
 }
