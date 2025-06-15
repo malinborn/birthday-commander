@@ -90,6 +90,51 @@ public class EmployeeService(
             new { MattermostUserId = mattermostId });
     }
 
+    public async Task UpdateWishlist(Guid employeeId, string wishlistLink)
+    {
+        if (Guid.Empty.Equals(employeeId)) throw new ArgumentException("Employee ID cannot be empty");
+        using var connection = connectionFactory.Create();
+        
+        await connection.ExecuteAsync(SqlScripts.UpdateWishlist, 
+            new { Id = employeeId, WishlistLink = wishlistLink, UpdatedAt = DateTime.UtcNow });
+    }
+
+    public async Task<List<Employee>> GetSubscriptions(Guid employeeId)
+    {
+        if (Guid.Empty.Equals(employeeId)) throw new ArgumentException("Employee ID cannot be empty");
+        
+        using var connection = connectionFactory.Create();
+        
+        var subscribers = await connection.QueryAsync<Employee>(SqlScripts.GetSubscriptions, 
+            new { SubscriberId = employeeId });
+        
+        return subscribers.ToList();
+    }
+
+    public async Task<List<Employee>> GetSubscribers(Guid employeeId)
+    {
+        if (Guid.Empty.Equals(employeeId)) throw new ArgumentException("Employee ID cannot be empty");
+        
+        using var connection = connectionFactory.Create();
+        
+        var subscribers = await connection.QueryAsync<Employee>(SqlScripts.GetSubscribers, 
+            new { BirthdayEmployeeId = employeeId });
+        
+        return subscribers.ToList();
+    }
+
+    public async Task UpdateBirthday(Guid employeeId, DateTime birthday)
+    {
+        if (Guid.Empty.Equals(employeeId)) throw new ArgumentException("Employee ID cannot be empty");
+        if (birthday.Equals(default)) throw new ArgumentException("Birthday cannot be empty");
+
+        using var connection = connectionFactory.Create();
+
+        await connection.ExecuteAsync(
+            SqlScripts.UpdateBirthday, 
+            new { Id = employeeId, Birthday = birthday, UpdatedAt = DateTime.UtcNow });;
+    }
+
     public async Task<List<Employee>> GetAllEmployees()
     {
         using var connection = connectionFactory.Create();
