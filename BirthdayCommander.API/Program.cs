@@ -1,12 +1,19 @@
 ﻿using System.Data;
 using BirthdayCommander.Core.Interfaces;
 using BirthdayCommander.Core.Interfaces.Handlers;
+using BirthdayCommander.Handlers;
 using BirthdayCommander.Infrastructure.Services;
 using BirthdayCommander.Infrastructure.Data;
+using BirthdayCommander.Infrastructure.Data.Migrations;
 using BirthdayCommander.Infrastructure.Services.BackgroundServices;
 using FluentMigrator.Runner;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
 
 // Persistance 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -15,7 +22,7 @@ builder.Services.AddFluentMigratorCore()
     .ConfigureRunner(rb => rb
         .AddPostgres()
         .WithGlobalConnectionString(connectionString)
-        .ScanIn(typeof(Program).Assembly).For.All())
+        .ScanIn(typeof(CreateEmployeesTable).Assembly).For.All())
     .AddLogging(lb => lb.AddFluentMigratorConsole());
 
 builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
@@ -24,7 +31,7 @@ builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IMessageParser, MessageParser>();
-builder.Services.AddScoped<IDirectMessageHandler>(); // TODO добавить Message Handler
+builder.Services.AddScoped<IDirectMessageHandler, DirectMessageHandler>();
 
 builder.Services.AddHttpClient<IMattermostService, MattermostService>(client =>
 {
@@ -44,8 +51,20 @@ builder.Services.AddHostedService<MattermostBotService>();
     
 var app = builder.Build();
 
-var migrationRunner = app.Services.GetRequiredKeyedService<IMigrationRunner>(connectionString);
-migrationRunner.MigrateUp();
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var migrationRunner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+        migrationRunner.MigrateUp();
+        Console.WriteLine("Migrations went successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Fatal, {0}", ex);
+        throw;
+    }
+}
 
 // Security headers
 app.Use(async (context, next) =>
