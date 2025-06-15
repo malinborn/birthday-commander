@@ -37,10 +37,10 @@ public class SubscriptionService(
                 throw new ArgumentException($"Subscriber with email {subscriberEmail} not found");
             
             if (birthdayPerson == null) 
-                throw new ArgumentException($"Birthday person with email {birthdayPersonEmail} not found"); 
+                return false; 
             
             if (!birthdayPerson.Birthday.HasValue) 
-                throw new ArgumentException($"Birthday person with email {birthdayPersonEmail} has no birthday set");
+                return false;
 
             var existingSubscriptionsCount = await connection.ExecuteScalarAsync<int>(
                 SqlScripts.GetBirthdaySubscriptions,
@@ -98,7 +98,7 @@ public class SubscriptionService(
             throw new ArgumentException($"Subscriber with email {subscriberEmail} not found");
             
         if (birthdayPerson == null) 
-            throw new ArgumentException($"Birthday person with email {birthdayPersonEmail} not found"); 
+            return false; 
         
         var deleted = await connection.ExecuteAsync(
             SqlScripts.DeleteSubscription, 
