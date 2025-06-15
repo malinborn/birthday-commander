@@ -2,5 +2,5 @@ namespace BirthdayCommander.Core.Interfaces.Handlers;
 
 public interface IDirectMessageHandler
 {
-    Task HandleDirectMessage(string userId, string channelId, string message);
+    Task HandleDirectMessage(string userId, string channelId, string message); // вернуть на возвращаемый Task
 }
