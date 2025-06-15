@@ -7,7 +7,7 @@ namespace BirthdayCommander.Infrastructure.Services;
 public class MessageParser : IMessageParser
 {
     private static readonly Regex UrlRegex = new (
-        @"https?://(www\.)?[-a-zA-Z0-9@:%.*+~#=]*\b(wish|gift|present|birthday|anniversary|wedding|registry|list)\b[-a-zA-Z0-9@:%.*+~#=]*\.[a-zA-Z0-9()]{1,6}\b(/[-a-zA-Z0-9()@:%*+.~#/=]*)?", 
+        @"https?://(www\.)?[-a-zA-Z0-9@:%.*+~#=]*(wish|gift|present|birthday|anniversary|wedding|registry|list)[-a-zA-Z0-9@:%.*+~#=]*\.[a-zA-Z0-9()]{1,6}\b(/[-a-zA-Z0-9()@:%*+.~#/=]*)?", 
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
         
     private static readonly Regex EmailRegex = new (@"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
@@ -23,6 +23,7 @@ public class MessageParser : IMessageParser
             { "remove", CommandType.Unsubscribe },
             { "rm", CommandType.Unsubscribe },
             { "отписаться", CommandType.Unsubscribe },
+            { "отписка", CommandType.Unsubscribe },
             { "удалить", CommandType.Unsubscribe },
         };
     
@@ -39,6 +40,11 @@ public class MessageParser : IMessageParser
     private static readonly Dictionary<string, CommandType> ParameterlessCommandKeywords = new(StringComparer.OrdinalIgnoreCase)
     {
         // Help commands
+        { "привет", CommandType.Help },
+        { "hello", CommandType.Help },
+        { "hi", CommandType.Help },
+        { "старт", CommandType.Help },
+        { "start", CommandType.Help },
         { "help", CommandType.Help },
         { "?", CommandType.Help },
         { "commands", CommandType.Help },
