@@ -19,36 +19,40 @@ public class EmployeeService(
         
         using var connection = connectionFactory.Create();
         
-        var employee = await connection.QueryFirstOrDefaultAsync<Employee>(
+        var employee = await connection.QueryFirstOrDefaultAsync<Employee?>(
             SqlScripts.GetEmployeeByEmailOrMattermostId,
             new { Email = email, MattermostId = mattermostId });
+        
+        logger.LogDebug("Employee {mattermostId} and ID: {Id} found with email {Email}.", employee?.MattermostUserId, employee?.Id, email);
 
-        if (employee != null)
+        if (employee == null)
         {
-            if (!string.IsNullOrEmpty(employee.MattermostUserId)) return employee;
+            employee = new Employee
+            {
+                Id = Guid.NewGuid(),
+                Email = email,
+                MattermostUserId = mattermostId,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
             
-            await connection.ExecuteAsync(SqlScripts.UpdateEmployeeMattermostId,
-                new { Id = employee.Id, MattermostUserId = employee.MattermostUserId, UpdatedAt = DateTime.UtcNow });
-                
-            employee.MattermostUserId = mattermostId;
-            logger.LogInformation("Updated Employee mattermostID with email {Email} to {MattermostUserId}.", email, mattermostId);
-
+            await connection.ExecuteAsync(SqlScripts.InsertEmployee, employee);
+            
+            logger.LogInformation("Created Employee with email {Email}.", email);
             return employee;
         }
 
-        employee = new Employee
+        if (string.IsNullOrWhiteSpace(employee.MattermostUserId))
         {
-            Id = Guid.NewGuid(),
-            Email = email,
-            MattermostUserId = mattermostId,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+            employee.MattermostUserId = mattermostId;
+            await connection.ExecuteAsync(SqlScripts.UpdateEmployeeMattermostId,
+                new { Id = employee.Id, MattermostUserId = employee.MattermostUserId, UpdatedAt = DateTime.UtcNow });
+            
+            logger.LogInformation("Updated Employee mattermostID with email {Email} to {MattermostUserId}.", email,
+                mattermostId);
+        }
         
-        await connection.ExecuteAsync(SqlScripts.InsertEmployee, employee);
-        
-        logger.LogInformation("Created Employee with email {Email}.", email);
         return employee;
     }
 
