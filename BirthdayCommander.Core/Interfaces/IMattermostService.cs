@@ -5,8 +5,8 @@ namespace BirthdayCommander.Core.Interfaces;
 public interface IMattermostService
 {
     Task<MattermostUser> GetMeAsync();
-    Task<MattermostUser> GetUserByIdAsync(string userId);
-    Task<MattermostUser> GetUserByEmailAsync(string email);
+    Task<MattermostUser?>? GetUserByIdAsync(string userId);
+    Task<MattermostUser?> GetUserByEmailAsync(string email);
     Task<string> CreateGroupChannelAsync(List<string> userIds, string channelName);
     Task<string> CreateDirectChannelAsync(string userId);
     Task SendMessageAsync(string channelId, string message);
