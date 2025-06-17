@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using System.Text.Json;
 using BirthdayCommander.Core.Interfaces;
 using BirthdayCommander.Core.Models.Mattermost;
@@ -130,9 +131,39 @@ public class MattermostService : IMattermostService
         throw new NotImplementedException();
     }
 
-    public Task SendMessageAsync(string channelId, string message)
+    public async Task SendMessageAsync(string channelId, string message)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(channelId))
+        {
+            throw new ArgumentException("Channel ID cannot be empty");
+        }
+            
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            throw new ArgumentException("Message cannot be empty");
+        }
+
+        var request = new MattermostPostRequest
+        {
+            ChannelId = channelId,
+            Message = message
+        };
+
+        var json = JsonSerializer.Serialize(request, _jsonOptions);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync("/api/v4/posts", content);
+            
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            _logger.LogError("Failed to send message to channel {ChannelId}: {StatusCode} - {Error}", 
+                channelId, response.StatusCode, error);
+            throw new Exception($"Failed to send message: {response.StatusCode}");
+        }
+            
+        _logger.LogDebug("Sent message to channel {ChannelId}", channelId);
+
     }
 
     public Task SendDirectMessageAsync(string userId, string message)
