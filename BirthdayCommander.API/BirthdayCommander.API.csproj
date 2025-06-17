@@ -6,13 +6,8 @@
         <Nullable>enable</Nullable>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <RootNamespace>BirthdayCommander</RootNamespace>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
+      <UserSecretsId>f9009324-afae-42f6-9f08-82e86bd3babf</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.66" />
@@ -23,6 +18,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BirthdayCommander.Infrastructure\BirthdayCommander.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Dockerfile" />
     </ItemGroup>
 
 </Project>
