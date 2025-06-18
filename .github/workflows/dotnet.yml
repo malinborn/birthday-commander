@@ -51,17 +51,17 @@ jobs:
     - name: Prepare server directory
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        host: ${{ secrets.DEPLOYMENT_IP }}
+        username: ${{ secrets.DEPLOYMENT_USER }}
+        key: ${{ secrets.DEPLOYMENT_PRIVATE_KEY }}
         script: mkdir -p ~/app
 
     - name: Copy docker-compose to server
       uses: appleboy/scp-action@v1
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        host: ${{ secrets.DEPLOYMENT_IP }}
+        username: ${{ secrets.DEPLOYMENT_USER }}
+        key: ${{ secrets.DEPLOYMENT_PRIVATE_KEY }}
         source: "docker-compose.yml"
         target: "~/app/"
 
