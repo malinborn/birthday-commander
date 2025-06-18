@@ -1,7 +1,56 @@
-﻿services:
-  birthdaycommander:
-    image: birthdaycommander
+﻿version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: bc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bc_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bc_password}
+      POSTGRES_DB: ${POSTGRES_DB:-bc_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - bc-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
     build:
       context: .
-      dockerfile: BirthdayCommander/Dockerfile
+      dockerfile: Dockerfile
+    image: birthday-commander:latest
+    container_name: birthday-commander-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB:-bc_db};Username=${POSTGRES_USER:-bc_user};Password=${POSTGRES_PASSWORD:-bc_password}
+      - Mattermost__ServerUrl=${MATTERMOST_SERVER_URL}
+      - Mattermost__BotToken=${MATTERMOST_BOT_TOKEN}
+      - Mattermost__WebhookSecret=${MATTERMOST_WEBHOOK_SECRET:-}
+      - BirthdayCheck__Time=${BIRTHDAY_CHECK_TIME:-09:00:00}
+      - BirthdayCheck__TimeZone=${BIRTHDAY_CHECK_TIMEZONE:-UTC}
+    volumes:
+      - app_logs:/app/logs
+    ports:
+      - "5000:8080"
+    networks:
+      - bc-network
 
+networks:
+  bc-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  app_logs:
