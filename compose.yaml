@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - bc-network
     healthcheck:
@@ -22,10 +22,7 @@ services:
       retries: 5
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: birthday-commander:latest
+    image: ghcr.io/malinborn/birthday-commander:latest
     container_name: birthday-commander-app
     restart: unless-stopped
     depends_on:
@@ -43,7 +40,7 @@ services:
     volumes:
       - app_logs:/app/logs
     ports:
-      - "5000:8080"
+      - "127.0.0.1:5000:8080"
     networks:
       - bc-network
 
