@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: birthday-commander
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-deploy:
