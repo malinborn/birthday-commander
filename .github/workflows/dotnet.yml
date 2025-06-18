@@ -67,12 +67,18 @@ jobs:
 
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
       with:
         host: ${{ secrets.DEPLOYMENT_IP }}
         username: ${{ secrets.DEPLOYMENT_USER }}
         key: ${{ secrets.DEPLOYMENT_PRIVATE_KEY }}
+        envs: GITHUB_TOKEN,GITHUB_ACTOR
         script: |
           cd ~/app
+          
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           
           # Create .env file from secrets
           cat > .env << EOF
@@ -93,3 +99,5 @@ jobs:
           
           # Clean up old images
           docker image prune -f
+          
+          docker logout ghcr.io
