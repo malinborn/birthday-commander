@@ -1,0 +1,80 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: birthday-commander
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/app
+          
+          # Create .env file from secrets
+          cat > .env << EOF
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          ASPNETCORE_ENVIRONMENT=Production
+          MATTERMOST_SERVER_URL=${{ secrets.MATTERMOST_SERVER_URL }}
+          MATTERMOST_BOT_TOKEN=${{ secrets.MATTERMOST_BOT_TOKEN }}
+          MATTERMOST_WEBHOOK_SECRET=${{ secrets.MATTERMOST_WEBHOOK_SECRET }}
+          BIRTHDAY_CHECK_TIME=${{ secrets.BIRTHDAY_CHECK_TIME }}
+          BIRTHDAY_CHECK_TIMEZONE=${{ secrets.BIRTHDAY_CHECK_TIMEZONE }}
+          EOF
+          
+          # Pull latest image
+          docker compose pull app
+          
+          # Recreate and start containers
+          docker compose up -d --force-recreate app
+          
+          # Clean up old images
+          docker image prune -f
