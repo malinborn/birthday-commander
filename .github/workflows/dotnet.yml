@@ -51,9 +51,9 @@ jobs:
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        host: ${{ secrets.DEPLOYMENT_IP }}
+        username: ${{ secrets.DEPLOYMENT_USER }}
+        key: ${{ secrets.DEPLOYMENT_PRIVATE_KEY }}
         script: |
           cd ~/app
           
@@ -66,8 +66,6 @@ jobs:
           MATTERMOST_SERVER_URL=${{ secrets.MATTERMOST_SERVER_URL }}
           MATTERMOST_BOT_TOKEN=${{ secrets.MATTERMOST_BOT_TOKEN }}
           MATTERMOST_WEBHOOK_SECRET=${{ secrets.MATTERMOST_WEBHOOK_SECRET }}
-          BIRTHDAY_CHECK_TIME=${{ secrets.BIRTHDAY_CHECK_TIME }}
-          BIRTHDAY_CHECK_TIMEZONE=${{ secrets.BIRTHDAY_CHECK_TIMEZONE }}
           EOF
           
           # Pull latest image
