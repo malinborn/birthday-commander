@@ -74,4 +74,21 @@ public class SqlScripts
     DELETE FROM subscribers
     WHERE subscriber_id = @SubscriberId
     AND birthday_employee_id = @BirthdayEmployeeId";
+
+    public const string GetEmployeesWithUpcomingBirthdays = @"
+    SELECT id, email, birthday, mattermost_user_id, wishlist_link
+    FROM employees 
+    WHERE is_active = true 
+      AND birthday IS NOT NULL
+      AND (
+        MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int, 
+                  EXTRACT(MONTH FROM birthday)::int, 
+                  EXTRACT(DAY FROM birthday)::int)
+        BETWEEN CURRENT_DATE AND @EndDate
+        OR
+        MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int + 1, 
+                  EXTRACT(MONTH FROM birthday)::int, 
+                  EXTRACT(DAY FROM birthday)::int)
+        BETWEEN CURRENT_DATE AND @EndDate
+      )";
 }
