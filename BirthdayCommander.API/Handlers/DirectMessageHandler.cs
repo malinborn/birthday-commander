@@ -79,6 +79,7 @@ public class DirectMessageHandler(
                 CommandType.SetBirthday => await HandleSetBirthday(employee.Id, command.Parameters[0]),
                 CommandType.Unsubscribe => await HandleUnsubscribe(userEmail, command.Parameters),
                 CommandType.ListBirthdaysWeek => await HandleListBirthdaysWeek(),
+                CommandType.ChangeInvisibility => await ChangeInvisibility(),
                 _ => GetHelpText()
             };
         }
@@ -87,6 +88,11 @@ public class DirectMessageHandler(
             logger.LogError(ex, "Error handling command {CommandType}", command.Type);
             return "❌ An unexpected error occurred. Please try again later.";
         }
+    }
+
+    private async Task<string> ChangeInvisibility()
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<string> HandleListBirthdaysWeek()
