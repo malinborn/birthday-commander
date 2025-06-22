@@ -20,3 +20,14 @@
     ```bash
     dotnet script generate-test-employees.csx 
     ```
+
+6. Проинициализируйте user-secrets
+   ```bash
+   dotnet user-secrets init 
+    ```
+7. Создайте бота с доступом к личным сообщениям в Mattermost или Slack и положите секрет в user-secrets, также добавьте url вашего сервера и вебхук секрет
+   ```bash
+   dotnet user-secrets set "Mattermost:BotToken" "{TOKEN}"
+   dotnet user-secrets set "Mattermost:ServerUrl" "https://{DOMAIN}"
+   dotnet user-secrets set "Mattermost:WebHookSecret" "{WEBHOOK_SECRET}"
+    ```
