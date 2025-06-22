@@ -157,4 +157,12 @@ public class EmployeeService(
         
         return employees.ToList();
     }
+
+    public async Task UpdateInvisibility(Guid employeeId, bool newIsInvisible)
+    {
+        using var connection = connectionFactory.Create();
+        
+        await connection.ExecuteAsync(SqlScripts.UpdateInvisibility, 
+            new { Id = employeeId, IsInvisible = newIsInvisible, UpdatedAt = DateTime.UtcNow });
+    }
 }

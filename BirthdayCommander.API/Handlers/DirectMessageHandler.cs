@@ -79,6 +79,7 @@ public class DirectMessageHandler(
                 CommandType.SetBirthday => await HandleSetBirthday(employee.Id, command.Parameters[0]),
                 CommandType.Unsubscribe => await HandleUnsubscribe(userEmail, command.Parameters),
                 CommandType.ListBirthdaysWeek => await HandleListBirthdaysWeek(),
+                CommandType.ChangeInvisibility => await ChangeInvisibility(employee.Id),
                 _ => GetHelpText()
             };
         }
@@ -87,6 +88,20 @@ public class DirectMessageHandler(
             logger.LogError(ex, "Error handling command {CommandType}", command.Type);
             return "❌ An unexpected error occurred. Please try again later.";
         }
+    }
+
+    private async Task<string> ChangeInvisibility(Guid employeeId)
+    {
+        var employee = await employeeService.GetById(employeeId);
+
+        await employeeService.UpdateInvisibility(employeeId, !employee!.IsInvisible);
+        
+        var message = !employee.IsInvisible
+            ? @"🕵🏻‍♂️ Теперь мы спрятали твой День Рождения и не уведомим твоих подписчиков о нем, а также не поздравим в dodo-live. 
+Но ты всегда можешь снова написать `невидимка` и мы снова начнем напоминать ребятам о твоем Дне Рождения 🙏"
+            : "✨ Мы снова будем напоминать твоим подписчикам о твоем Дне Рождения ✨";
+
+        return message;
     }
 
     private async Task<string> HandleListBirthdaysWeek()

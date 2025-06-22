@@ -91,4 +91,10 @@ public class SqlScripts
                   EXTRACT(DAY FROM birthday)::int)
         BETWEEN CURRENT_DATE AND @EndDate
       )";
+
+    public const string UpdateInvisibility = @"
+    UPDATE employees
+    SET is_invisible = @IsInvisible, updated_at = @UpdatedAt
+    WHERE id = @Id
+    ";
 }

@@ -10,6 +10,6 @@ public enum CommandType
     SetWishlist,
     SetBirthday,
     Help,
-    SwitchInvisibility,
-    ListBirthdaysWeek
+    ListBirthdaysWeek,
+    ChangeInvisibility
 }
