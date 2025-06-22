@@ -69,6 +69,11 @@ public class MessageParser : IMessageParser
         { "who subscribed", CommandType.ShowSubscribers },
         { "подписчики", CommandType.ShowSubscribers },
         { "кто подписан", CommandType.ShowSubscribers },
+        
+        // ListBirthdays commands 
+        // Week
+        { "неделя", CommandType.ListBirthdaysWeek },
+        { "week", CommandType.ListBirthdaysWeek },
     };
     
     private static readonly Dictionary<string, CommandType> CommandKeywords = 
@@ -96,17 +101,15 @@ public class MessageParser : IMessageParser
         // check if thats an parameterless command, e.g. "help", "ls", "ps"
         foreach (var kvp in ParameterlessCommandKeywords)
         {
-            if (message.Equals(kvp.Key))
+            if (!message.Equals(kvp.Key)) continue;
+            command.Type = kvp.Value;
+            var remainder = message.Substring(kvp.Key.Length).Trim();
+            if (!string.IsNullOrWhiteSpace(remainder))
             {
-                command.Type = kvp.Value;
-                var remainder = message.Substring(kvp.Key.Length).Trim();
-                if (!string.IsNullOrWhiteSpace(remainder))
-                {
-                    command.Parameters.Add(remainder);
-                }
-                command.Parameters = command.Parameters.Distinct().ToList();
-                return command;
+                command.Parameters.Add(remainder);
             }
+            command.Parameters = command.Parameters.Distinct().ToList();
+            return command;
         }
         
         // Check if thats a wishlist

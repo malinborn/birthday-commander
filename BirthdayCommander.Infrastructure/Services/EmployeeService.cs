@@ -135,6 +135,19 @@ public class EmployeeService(
             new { Id = employeeId, Birthday = birthday, UpdatedAt = DateTime.UtcNow });;
     }
 
+    public async Task<List<Employee>> GetEmployeesWithUpcomingBirthdays(int daysAhead)
+    {
+        using var connection = connectionFactory.Create();
+
+        var endDate = DateTime.Today.AddDays(daysAhead);
+
+        var employees = await connection.QueryAsync<Employee>(
+            SqlScripts.GetEmployeesWithUpcomingBirthdays,
+            new { EndDate = endDate });
+
+        return employees.ToList();
+    }
+
     public async Task<List<Employee>> GetAllEmployees()
     {
         using var connection = connectionFactory.Create();

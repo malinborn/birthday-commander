@@ -12,6 +12,6 @@ public interface IEmployeeService
     Task<List<Employee>> GetSubscriptions(Guid employeeId);
     Task<List<Employee>> GetSubscribers(Guid employeeId);
     Task UpdateBirthday(Guid employeeId, DateTime birthday);
-    // Task<List<Employee>> GetEmployeesWithUpcomingBirthdays(int daysAhead);
+    Task<List<Employee>> GetEmployeesWithUpcomingBirthdays(int daysAhead);
     Task<List<Employee>> GetAllEmployees();
 }

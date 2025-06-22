@@ -9,5 +9,7 @@ public enum CommandType
     ShowSubscribers, 
     SetWishlist,
     SetBirthday,
-    Help
+    Help,
+    SwitchInvisibility,
+    ListBirthdaysWeek
 }

@@ -78,6 +78,7 @@ public class DirectMessageHandler(
                 CommandType.SetWishlist => await HandleSetWishlist(employee.Id, command.Parameters[0]),
                 CommandType.SetBirthday => await HandleSetBirthday(employee.Id, command.Parameters[0]),
                 CommandType.Unsubscribe => await HandleUnsubscribe(userEmail, command.Parameters),
+                CommandType.ListBirthdaysWeek => await HandleListBirthdaysWeek(),
                 _ => GetHelpText()
             };
         }
@@ -87,7 +88,78 @@ public class DirectMessageHandler(
             return "❌ An unexpected error occurred. Please try again later.";
         }
     }
+
+    private async Task<string> HandleListBirthdaysWeek()
+    {
+        var employees = await employeeService.GetEmployeesWithUpcomingBirthdays(7);
+        
+        if (!employees.Any())
+        {
+            return "🎂 На ближайшие дни дней рождений не запланировано!";
+        }
+        
+        var today = DateTime.Today;
+        var birthdayGroups = employees
+            .Select(emp => new
+            {
+                Employee = emp,
+                BirthdayThisYear = new DateTime(today.Year, emp.Birthday.Value.Month, emp.Birthday.Value.Day),
+                BirthdayNextYear = new DateTime(today.Year + 1, emp.Birthday.Value.Month, emp.Birthday.Value.Day)
+            })
+            .Select(x => new
+            {
+                x.Employee,
+                ActualBirthdayDate = x.BirthdayThisYear >= today ? x.BirthdayThisYear : x.BirthdayNextYear
+            })
+            .GroupBy(x => x.ActualBirthdayDate.Date)
+            .OrderBy(g => g.Key);
+        
+        var message = new StringBuilder();
+        message.AppendLine("🎉 **Дни рождения на ближайшую неделю:**");
+        message.AppendLine();
+        
+        var dayNames = new[] { "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
     
+        foreach (var group in birthdayGroups)
+        {
+            var date = group.Key;
+            var dayName = dayNames[(int)date.DayOfWeek];
+            var dateStr = date.ToString("dd.MM");
+        
+            // Добавляем эмодзи в зависимости от дня
+            var emoji = GetDayEmoji(date, today);
+        
+            message.AppendLine($"{emoji} **{dayName} {dateStr}**");
+        
+            // Добавляем список сотрудников
+            foreach (var item in group.OrderBy(x => x.Employee.Email))
+            {
+                message.AppendLine($"  • {item.Employee.Email}");
+            }
+        
+            message.AppendLine(); // Пустая строка между группами
+        }
+
+        return message.ToString().TrimEnd();
+    }
+    
+    private static string GetDayEmoji(DateTime birthdayDate, DateTime today)
+    {
+        var daysUntil = (birthdayDate - today).Days;
+    
+        return daysUntil switch
+        {
+            0 => "🎂", // Сегодня
+            1 => "🎈", // Завтра
+            2 => "🎁", // Послезавтра
+            3 => "🥳", // Через 3 дня
+            4 => "🎊", // Через 4 дня
+            5 => "🍰", // Через 5 дней
+            6 => "🎀", // Через 6 дней
+            _ => "🎉"  // Остальные дни
+        };
+    }
+
     private async Task<string> HandleSubscribe(string subscriberEmail, List<string> targetEmails)
     {
         var results = new List<string>();
