@@ -9,6 +9,7 @@ public class Employee
     public DateTime? Birthday { get; set; }
     public string? MattermostUserId { get; set; }
     public bool IsActive { get; set; }
+    public bool IsInvisible { get; set; }
     public string? WishlistLink { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
