@@ -14,4 +14,5 @@ public interface IEmployeeService
     Task UpdateBirthday(Guid employeeId, DateTime birthday);
     Task<List<Employee>> GetEmployeesWithUpcomingBirthdays(int daysAhead);
     Task<List<Employee>> GetAllEmployees();
+    Task UpdateInvisibility(Guid employeeId, bool newIsInvisible);
 }
