@@ -74,6 +74,12 @@ public class MessageParser : IMessageParser
         // Week
         { "неделя", CommandType.ListBirthdaysWeek },
         { "week", CommandType.ListBirthdaysWeek },
+        
+        // Invisibility Commands
+        { "invis", CommandType.ChangeInvisibility },
+        { "invisibility", CommandType.ChangeInvisibility },
+        { "инвиз", CommandType.ChangeInvisibility },
+        { "невидимка", CommandType.ChangeInvisibility },
     };
     
     private static readonly Dictionary<string, CommandType> CommandKeywords = 
